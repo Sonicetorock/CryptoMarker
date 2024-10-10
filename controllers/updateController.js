@@ -6,6 +6,50 @@ dotenv.config();
 const COIN_ID_TYPES = ['bitcoin', 'matic-network', 'ethereum'];
 const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3/simple/price';
 
+// fftching cryptocurrency data from the CoinGecko API
+const fetchCryptoData = async () => {
+    try {
+        const response = await axios.get(COINGECKO_API_URL, {
+            params: {
+                x_cg_api_key: process.env.COINGECKO_API_KEY,
+                ids: COIN_ID_TYPES.join(','),
+                vs_currencies: 'usd',
+                include_market_cap: true,
+                include_24hr_change: true,
+            },
+        });
+
+        return response.data;
+    } catch (err) {
+        console.error('Error fetching cryptocurrency data:', err.message);
+        throw new Error('API request failed');
+    }
+};
+
+// Storing currency data to our database
+const saveCoinData = async (coinId, coinData) => {
+    const newCoin = new Coin({
+        coinId,
+        price: coinData.usd,
+        marketCap: coinData.usd_market_cap,
+        change24h: coinData.usd_24h_change,
+    });
+    await newCoin.save();
+};
+
+// job function to fetch and store the data
+const fetchAndStoreCryptoData = async () => {
+    try {
+        const data = await fetchCryptoData();
+        for (const coinId of Object.keys(data)) {
+            await saveCoinData(coinId, data[coinId]);
+        }
+        console.log('Cryptocurrency data saved successfully');
+    } catch (error) {
+        console.error('Error fetching and saving cryptocurrency data:', error.message);
+    }
+};
+
 //  latest stats for a specified curency type
 const getStats = async (req, res) => {
     const { coin_id_type } = req.query;
