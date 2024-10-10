@@ -52,14 +52,14 @@ const fetchAndStoreCryptoData = async () => {
 
 //  latest stats for a specified curency type
 const getStats = async (req, res) => {
-    const { coin_id_type } = req.query;
+    const { coin } = req.query;
 
-    if (!COIN_ID_TYPES.includes(coin_id_type)) {
+    if (!COIN_ID_TYPES.includes(coin)) {
         return res.status(400).json({ error: 'Invalid coin type specified' });
     }
 
     try {
-        const latestRecord = await Coin.findOne({ coinId: coin_id_type }).sort({ createdAt: -1 });
+        const latestRecord = await Coin.findOne({ coinId: coin }).sort({ createdAt: -1 });
         if (!latestRecord) {
             return res.status(404).json({ error: 'No data found for the requested coin type' });
         }
@@ -76,14 +76,14 @@ const getStats = async (req, res) => {
 
 // calculate standard deviation of the last 100 price records of specified currency type using utility func
 const getDeviation = async (req, res) => {
-    const { coin_id_type } = req.query;
+    const { coin } = req.query;
 
-    if (!COIN_ID_TYPES.includes(coin_id_type)) {
+    if (!COIN_ID_TYPES.includes(coin)) {
         return res.status(400).json({ error: 'Invalid coin type specified' });
     }
 
     try {
-        const records = await Coin.find({ coinId: coin_id_type }).sort({ createdAt: -1 }).limit(100);
+        const records = await Coin.find({ coinId: coin }).sort({ createdAt: -1 }).limit(100);
         if (records.length === 0) {
             return res.status(404).json({ error: 'No data found for the requested coin type' });
         }

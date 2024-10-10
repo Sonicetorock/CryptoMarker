@@ -7,7 +7,7 @@ const coinSchema = new mongoose.Schema(
         required: true 
     },
     price: {
-         ype: Number, 
+         type: Number, 
         required: true 
     },
     marketCap: { 
