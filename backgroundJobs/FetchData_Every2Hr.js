@@ -9,8 +9,9 @@ const startBackgroundJob = () => {
     setInterval(async () => {
         console.log('Ok 2hrs Done !! , Running the cryptocurrency data fetch job...');
         await fetchAndStoreCryptoData();
-    }, 120000);
+    }, 7200000);
 };
 
 module.exports = { startBackgroundJob };
 // 2mins => 120 sec=> 120000ms
+// 2hrs => 120mins => 120*60 => 7200secsa => 7200000ms
